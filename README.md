@@ -1,2 +1,3 @@
-# tdd-idris
-Type-Driven Development with Idris
+# Type-Driven Development with Idris
+
+Exercises and programming along...
