@@ -1,4 +1,4 @@
-module Average
+module Chapter02.Average
 
 import Data.String
 
