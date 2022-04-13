@@ -2,5 +2,4 @@
 *.o
 *.ttc
 *.ttm
-*/build/exec
-*/build/ttc
+build
