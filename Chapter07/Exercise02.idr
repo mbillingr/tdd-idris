@@ -10,3 +10,6 @@ Show ty => Show (Expr ty) where
 
 (Eq ty, Abs ty, Neg ty, Integral ty) => Eq (Expr ty) where
     (x == y) = eval x == eval y
+
+(Abs ty, Neg ty, Integral ty) => Cast (Expr ty) ty where
+     cast x = eval x
