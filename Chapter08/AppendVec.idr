@@ -1,4 +1,4 @@
-
+import data.Nat
 import Data.Vect
 
 append_nil : Vect m a -> Vect (plus m 0) a

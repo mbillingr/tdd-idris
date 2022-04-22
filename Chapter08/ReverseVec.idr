@@ -1,4 +1,5 @@
 
+import Data.Nat
 import Data.Vect
 
 myReverse : Vect n a -> Vect n a
