@@ -1,6 +1,6 @@
 
 import Data.Vect
-import Chapter09.Elem
+import Data.Vect.Elem
 
 removeElem : {n : Nat} -> 
              (value : a) -> 
