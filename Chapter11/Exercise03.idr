@@ -45,15 +45,36 @@ parseCmd ["cat", file] = Just (Cat file)
 parseCmd ["copy", src, dst] = Just (Copy src dst)
 parseCmd _ = Nothing
 
+mutual
+     shell : ConsoleIO ()
+     shell = do PutStr ">> "
+                cmd <- GetLine
+                case parseCmd (words cmd) of
+                     Nothing => do PutStr "Invalid Command\n"; shell
+                     Just Exit => Quit ()
+                     Just (Cat filename) => catFile filename
+                     Just (Copy src dst) => copyFile src dst
 
-shell : ConsoleIO ()
-shell = do PutStr ">> "
-           cmd <- GetLine
-           case parseCmd (words cmd) of
-                Nothing => do PutStr "Invalid Command\n"; shell
-                Just Exit => Quit ()
-                Just (Cat x) => ?rhs_cat
-                Just (Copy x y) => ?rhs_cpy
+     catFile : String -> ConsoleIO ()
+     catFile filename = do result <- ReadFile filename
+                           case result of
+                                (Left err) => PutStr (show err ++ "\n")
+                                (Right content) => PutStr content
+                           shell
+
+     copyFile : String -> String -> ConsoleIO ()
+     copyFile src dst = do result <- ReadFile src
+                           case result of
+                                (Left err) => do PutStr (show err ++ "\n")
+                                                 shell
+                                (Right content) => toFile dst content
+
+     toFile : String -> String -> ConsoleIO ()
+     toFile dst content = do result2 <- WriteFile dst content
+                             case result2 of
+                                  (Left err) => PutStr (show err ++ "\n")
+                                  (Right ()) => PutStr "OK"
+                             shell
 
 main : IO ()
 main = do Just () <- run forever shell
