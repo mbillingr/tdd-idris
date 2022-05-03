@@ -1,24 +1,5 @@
 
-data State : (stateType : Type) -> Type -> Type where
-     Get : State stateType stateType
-     Put : stateType -> State stateType ()
-
-     Pure : ty -> State stateType ty
-     Bind : State stateType a -> (a -> State stateType b) -> State stateType b
-
-(>>=) : State stateType a -> (a -> State stateType b) -> State stateType b
-(>>=) = Bind
-
-%tcinline
-(>>) : State stateType () -> Lazy (State stateType b) -> State stateType b
-ma >> mb = Bind ma (\ _ => mb)
-
-runState : State stateType a -> (st : stateType) -> (a, stateType)
-runState Get st = (st, st)  -- produce current state and leave state unchanged
-runState (Put newState) st = ((), newState)
-runState (Pure x) st = (x, st)
-runState (Bind cmd prog) st = let (val, nextState) = runState cmd st in
-                                  runState (prog val) nextState
+import Chapter12.StateMonad
 
 
 data Tree a = Empty | Node (Tree a) a (Tree a)
