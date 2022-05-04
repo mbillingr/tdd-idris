@@ -20,11 +20,6 @@ mutual
 
     Monad (State stateType) where
         (>>=) = Bind
-{-
-%tcinline
-(>>) : State stateType () -> Lazy (State stateType b) -> State stateType b
-ma >> mb = Bind ma (\ _ => mb)
--}
 
 runState : State stateType a -> (st : stateType) -> (a, stateType)
 runState Get st = (st, st)  -- produce current state and leave state unchanged
