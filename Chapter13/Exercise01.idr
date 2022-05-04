@@ -58,7 +58,6 @@ namespace EX3
     (>>) : MatterCmd () st1 st2 -> Inf (MatterCmd b st2 st3) -> MatterCmd b st1 st3
     ma >> mb = ma >>= \_ => mb
 
-    export
     iceSteam : MatterCmd () Solid Gas
     iceSteam = do Melt; Boil
 
