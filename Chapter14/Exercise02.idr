@@ -47,14 +47,16 @@ namespace EX2
 
     data CoinResult = Inserted | Rejected
 
+    InsertHelper : {coins : Nat} -> {chocs : Nat} -> CoinResult -> (Nat, Nat)
+    InsertHelper res = case res of
+                            Inserted => (S coins, chocs)
+                            Rejected => (coins, chocs)
+
     data MachineCmd : Type ->
                       VendState ->
                       (ty -> VendState) ->
                       Type where
-        InsertCoin : MachineCmd CoinResult (coins, chocs) 
-                                (\res => case res of 
-                                              Inserted => (S coins, chocs)  -- Error: coins, chocs is not defined here... don't know how to solve that in Idris 2
-                                              Rejected => (coins, chocs))
+        InsertCoin : MachineCmd CoinResult (coins, chocs) InsertHelper 
         Vend       : MachineCmd () (S coins, S chocs) (const (coins, chocs))
         GetCoins   : MachineCmd () (coins, chocs)     (const (Z, chocs))
         Refill     : (bars : Nat) ->
@@ -63,7 +65,7 @@ namespace EX2
         Display : String -> MachineCmd () state (const state)
         GetInput : MachineCmd (Maybe Input) state (const state)
 
-        Pure : ty -> MachineCmd ty state (const state)
+        Pure : (res : ty) -> MachineCmd ty (state_fn res) state_fn
         (>>=) : MachineCmd a st1 st2_fn ->
                  ((res : a) -> MachineCmd b (st2_fn res) st3_fn) ->
                  MachineCmd b st1 st3_fn
@@ -107,9 +109,11 @@ namespace EX2
                             | Nothing => do Display "Invalid input"
                                             machineLoop
                          case x of
-                            COIN => do {-cr <- InsertCoin
+                            COIN => do cr <- InsertCoin
                                        case cr of
-                                            case_val =>-} ?rhs
+                                            Inserted => machineLoop
+                                            Rejected => do Display "Coin rejected"                                       
+                                                           machineLoop
                             VEND => vend
                             CHANGE => do GetCoins
                                          Display "Change returned"
